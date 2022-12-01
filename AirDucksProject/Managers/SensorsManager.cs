@@ -1,7 +1,9 @@
 ﻿using AirDucksProject.Database;
 using AirDucksProject.MockData;
 using AirDucksProject.Models;
+using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
+using OpenQA.Selenium;
 
 namespace AirDucksProject.Managers
 {
@@ -12,7 +14,7 @@ namespace AirDucksProject.Managers
             //if (Sensors.Count == 0) Sensors = SensorData.GetMockSensors
 
             //TestCode Below. we will see how we use it
-            if (Sensors.Count == 0) Sensors = GetObjectsAsync().Result.ToDictionary(s => s.Mac, s => s);
+            if (Sensors.Count == 0) Sensors = GetSensorsAsync().Result.ToDictionary(s => s.Mac, s => s);
         }
         private static Dictionary<string, Sensor> Sensors = new Dictionary<string, Sensor>();
 
@@ -20,9 +22,14 @@ namespace AirDucksProject.Managers
         {
             return new List<Sensor>(Sensors.Values);
         }
-
+        public int GetIdByMac(string mac)
+        {
+            bool hasValue = Sensors.TryGetValue(mac, out Sensor sensor);
+            if (hasValue) return sensor.Id;
+            throw new NotFoundException("No sensor with that mac address found");
+        }
         //Test code
-        public async Task<IEnumerable<Sensor>> GetObjectsAsync()
+        private async Task<IEnumerable<Sensor>> GetSensorsAsync()
         {
             using (var context = new AirDucksDbContext())
             {

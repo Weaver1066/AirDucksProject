@@ -1,6 +1,8 @@
 ﻿using AirDucksProject.Managers;
 using AirDucksProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,12 +13,13 @@ namespace AirDucksProject.Controllers
     public class AirDucksController : ControllerBase
     {
         private SensorsManager sensorManager = new SensorsManager();
+        private MeasurementsManager measurementsManager = new MeasurementsManager();
         // GET: api/<Controller>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<Sensor>> GetAllSensors()
+        public ActionResult<string> GetAllSensors()
         {
-            return Ok(sensorManager.GetAll());
+            return Ok(JsonConvert.SerializeObject(new {Sensors = sensorManager.GetAll(), measurements = measurementsManager.GetLatest()}));
         }
 
         // GET api/<Controller>/5
@@ -28,8 +31,17 @@ namespace AirDucksProject.Controllers
 
         // POST api/<Controller>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] (string, DateTime, float) input)
         {
+            try 
+            {
+                measurementsManager.AddMeasurement(new Measurement(input.Item2, input.Item3, sensorManager.GetIdByMac(input.Item1)));
+            }
+            catch 
+            {
+                //do nothing
+            }
+            
         }
 
         // PUT api/<Controller>/5
