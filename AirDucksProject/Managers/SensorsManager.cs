@@ -9,14 +9,14 @@ namespace AirDucksProject.Managers
 {
     public class SensorsManager
     {
+        private static Dictionary<string, Sensor> Sensors = new Dictionary<string, Sensor>();
+        private static int nextId = 0;
         public SensorsManager()
         {
-            //if (Sensors.Count == 0) Sensors = SensorData.GetMockSensors
-
             //TestCode Below. we will see how we use it
             if (Sensors.Count == 0) Sensors = GetSensorsAsync().Result.ToDictionary(s => s.Mac, s => s);
         }
-        private static Dictionary<string, Sensor> Sensors = new Dictionary<string, Sensor>();
+
 
         public List<Sensor> GetAll()
         {
@@ -27,6 +27,40 @@ namespace AirDucksProject.Managers
             bool hasValue = Sensors.TryGetValue(mac, out Sensor sensor);
             if (hasValue) return sensor.Id;
             throw new NotFoundException("No sensor with that mac address found");
+        }
+        public async Task<Sensor> AddSensorAsync(string name, string mac)
+        {
+            Sensor newSensor = new Sensor() { Id = NextId().Result, Mac = mac, Name = name};
+            newSensor.ValidateMac();
+            newSensor.ValidateName();
+
+            using (var context = new AirDucksDbContext())
+            {
+                context.Set<Sensor>().Add(newSensor);
+                await context.SaveChangesAsync();
+            }
+            Sensors.Add(newSensor.Mac, newSensor);
+
+            return newSensor;
+        }
+
+        private async Task<int> NextId()
+        {
+            if(nextId == 0)
+            {
+                using (var context = new AirDucksDbContext())
+                {
+                    try
+                    {
+                        nextId = await context.Set<Sensor>().OrderByDescending(s => s.Id).Select(s => s.Id).FirstAsync();
+                    }
+                    catch
+                    {
+                        nextId = 0;
+                    }
+                }
+            }
+            return ++nextId;
         }
         //Test code
         private async Task<IEnumerable<Sensor>> GetSensorsAsync()

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AirDucksProject.Migrations
 {
     [DbContext(typeof(AirDucksDbContext))]
-    [Migration("20221201105218_airdcks")]
-    partial class airdcks
+    [Migration("20221205104254_airducks")]
+    partial class airducks
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,10 +46,7 @@ namespace AirDucksProject.Migrations
             modelBuilder.Entity("AirDucksProject.Models.Sensor", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Mac")
                         .IsRequired()
