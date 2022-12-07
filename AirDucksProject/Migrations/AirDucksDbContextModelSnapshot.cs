@@ -43,10 +43,7 @@ namespace AirDucksProject.Migrations
             modelBuilder.Entity("AirDucksProject.Models.Sensor", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Mac")
                         .IsRequired()

@@ -10,10 +10,19 @@ namespace AirDucksProject.Managers
 
         public MeasurementsManager()
         {
-            if (Latest.Count <= 0) Latest = DbGetLatestAsync().Result.ToDictionary(m => m.SensorId, m => m);
+            try
+            {
+                if (Latest.Count <= 0) Latest = DbGetLatestAsync().Result.ToDictionary(m => m.SensorId, m => m);
+            }
+            catch
+            {
+                Latest = new Dictionary<int, Measurement>();
+            }
         }
         public async void AddMeasurement(Measurement measurement)
         {
+            measurement.ValidateReading();
+            measurement.ValidateTime();
             Latest[measurement.SensorId] = measurement;
             using (var context = new AirDucksDbContext())
             {

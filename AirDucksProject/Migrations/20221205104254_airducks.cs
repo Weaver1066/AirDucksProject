@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AirDucksProject.Migrations
 {
     /// <inheritdoc />
-    public partial class airdcks : Migration
+    public partial class airducks : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,7 @@ namespace AirDucksProject.Migrations
                 name: "Sensors",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Mac = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },

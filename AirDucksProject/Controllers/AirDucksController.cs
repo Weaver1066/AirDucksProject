@@ -19,7 +19,7 @@ namespace AirDucksProject.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<string> GetAllSensors()
         {
-            return Ok(JsonConvert.SerializeObject(new {Sensors = sensorManager.GetAll(), measurements = measurementsManager.GetLatest()}));
+            return Ok(JsonConvert.SerializeObject(new { Sensors = sensorManager.GetAll(), measurements = measurementsManager.GetLatest() }));
         }
 
         // GET api/<Controller>/5
@@ -29,19 +29,39 @@ namespace AirDucksProject.Controllers
             return "value";
         }
 
-        // POST api/<Controller>
+        //POST api/<Controller>
+        [Route("[action]")]
         [HttpPost]
         public void Post([FromBody] (string, DateTime, float) input)
         {
-            try 
+            try
             {
-                measurementsManager.AddMeasurement(new Measurement(input.Item2, input.Item3, sensorManager.GetIdByMac(input.Item1)));
+                Measurement measurementToAdd = new Measurement(input.Item2, input.Item3, sensorManager.GetIdByMac(input.Item1));
+                measurementToAdd.ValidateReading();
+                measurementToAdd.ValidateTime();
+                measurementsManager.AddMeasurement(measurementToAdd);
             }
-            catch 
+            catch
             {
                 //do nothing
             }
-            
+        }
+
+        // POST api/<Controller>
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<Sensor> PostSensor([FromBody] Sensor toAdd)
+        {
+            try
+            {
+                return Created("", sensorManager.AddSensorAsync(toAdd.Name, toAdd.Mac).Result);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         // PUT api/<Controller>/5

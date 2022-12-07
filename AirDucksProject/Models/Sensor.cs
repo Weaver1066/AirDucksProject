@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.NetworkInformation;
 
 namespace AirDucksProject.Models
 {
     public class Sensor
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -26,18 +27,18 @@ namespace AirDucksProject.Models
 
         public void ValidateName()
         { 
-            if(String.IsNullOrEmpty(Name)) throw new InvalidDataException("Name cannot be null or empty");
+            if(String.IsNullOrEmpty(Name)) throw new ArgumentException("Name cannot be null or empty");
         }
         public void ValidateMac()
         {
-            if (string.IsNullOrEmpty(Mac)) throw new InvalidDataException("Mac address cannot be null or empty");
+            if (string.IsNullOrEmpty(Mac)) throw new ArgumentException("Mac address cannot be null or empty");
             try
             {
                 PhysicalAddress py = PhysicalAddress.Parse(Mac);
             }
-            catch (Exception)
+            catch
             {
-                throw new InvalidDataException("MAC address is not valid");
+                throw new ArgumentException("MAC address is not valid");
             }
         }
     }
