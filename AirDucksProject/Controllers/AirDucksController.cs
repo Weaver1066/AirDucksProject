@@ -13,9 +13,12 @@ namespace AirDucksProject.Controllers
     [ApiController]
     public class AirDucksController : ControllerBase
     {
+        //Managers instance creation
         private SensorsManager sensorManager = new SensorsManager();
         private MeasurementsManager measurementsManager = new MeasurementsManager();
-        // GET: api/<Controller>
+
+        //Returns a json string of an anon object consisting of two list properties
+        //one containing all sensors and another containg the latest readings for each sensor
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<string> GetAllSensors()
@@ -23,14 +26,15 @@ namespace AirDucksProject.Controllers
             return Ok(JsonConvert.SerializeObject(new { Sensors = sensorManager.GetAll(), measurements = measurementsManager.GetLatest() }));
         }
 
-        // GET api/<Controller>/5
+
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        //POST api/<Controller>
+        //Takes a measurement as a Tuple, validates it and if it passes adds it to the database and local cache
+        //if the measurement doesnt pass validation the method does nothing
         [Route("[action]")]
         [HttpPost]
         public void Post([FromBody] (string, DateTime, float) input)
@@ -48,7 +52,7 @@ namespace AirDucksProject.Controllers
             }
         }
 
-        // POST api/<Controller>
+        //Takes a sensor object and adds it to the database and the local cache
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -65,7 +69,8 @@ namespace AirDucksProject.Controllers
 
         }
 
-        // PUT api/<Controller>/5
+        //Takes a sensor object and updates the local cache and database based on the mac and name properties
+        //on the corresponding sensor
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -85,7 +90,7 @@ namespace AirDucksProject.Controllers
             }
         }
 
-        // DELETE api/<Controller>/5
+        // Takes a sensor and deletes it from the local cache and database
         [HttpDelete]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
