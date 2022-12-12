@@ -4,6 +4,7 @@ using AirDucksProject.Models;
 using Microsoft.AspNetCore.Server.IIS.Core;
 using Microsoft.EntityFrameworkCore;
 using OpenQA.Selenium;
+using System.Diagnostics.Metrics;
 
 namespace AirDucksProject.Managers
 {
@@ -16,7 +17,6 @@ namespace AirDucksProject.Managers
             //TestCode Below. we will see how we use it
             if (Sensors.Count == 0) Sensors = GetSensorsAsync().Result.ToDictionary(s => s.Mac, s => s);
         }
-
 
         public List<Sensor> GetAll()
         {
@@ -42,6 +42,32 @@ namespace AirDucksProject.Managers
             Sensors.Add(newSensor.Mac, newSensor);
 
             return newSensor;
+        }
+
+        public async Task<Sensor> UpdateSensorAsync(Sensor updatedSensor)
+        {
+            updatedSensor.ValidateMac();
+            updatedSensor.ValidateName();
+
+            using (var context = new AirDucksDbContext())
+            {
+                context.Set<Sensor>().Update(updatedSensor);
+                await context.SaveChangesAsync();
+            }
+            Sensors.Remove(Sensors.Where(s => s.Value.Id == updatedSensor.Id).Select(s => s.Key).First());
+            Sensors.Add(updatedSensor.Mac, updatedSensor);
+            return updatedSensor;
+        }
+
+        public async Task<Sensor> DeleteSensorAsync(Sensor sensorToDelete)
+        {
+            using (var context = new AirDucksDbContext())
+            {
+                context.Set<Sensor>().Remove(sensorToDelete);
+                await context.SaveChangesAsync();
+            }
+            Sensors.Remove(sensorToDelete.Mac);
+            return sensorToDelete;
         }
 
         private async Task<int> NextId()
