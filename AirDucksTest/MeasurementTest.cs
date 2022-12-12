@@ -1,4 +1,6 @@
-﻿using AirDucksProject.Models;
+﻿using AirDucksProject.Managers;
+using AirDucksProject.Models;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;

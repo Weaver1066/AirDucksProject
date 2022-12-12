@@ -2,6 +2,7 @@
 using AirDucksProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
@@ -23,12 +24,6 @@ namespace AirDucksProject.Controllers
             return Ok(JsonConvert.SerializeObject(new { Sensors = sensorManager.GetAll(), measurements = measurementsManager.GetLatest() }));
         }
 
-        // GET api/<Controller>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
 
         //POST api/<Controller>
         [Route("[action]")]
@@ -99,6 +94,15 @@ namespace AirDucksProject.Controllers
             {
                 return NotFound(ex.Message);
             }
+        }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{id}")]
+        public ActionResult<List<Measurement>> GetAllReadingsBySensorId(int id)
+        {
+            List<Measurement> measurement = measurementsManager.GetAllReadingsBySensorId(id).Result.ToList();
+            if (measurement.Count == 0) return NotFound("Id does not match sensor" + id);
+            return Ok(measurement);
         }
     }
 }
