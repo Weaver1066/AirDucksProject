@@ -10,14 +10,8 @@ namespace AirDucksProject.Managers
 
         public MeasurementsManager()
         {
-            try
-            {
-                if (Latest.Count <= 0) Latest = DbGetLatestAsync().Result.ToDictionary(m => m.SensorId, m => m);
-            }
-            catch
-            {
-                Latest = new Dictionary<int, Measurement>();
-            }
+            //Pulls measurement data from the database if the cache is empty. (should only happen after the server has been rebooted)
+            if (Latest.Count <= 0) Latest = DbGetLatestAsync().Result.ToDictionary(m => m.SensorId, m => m);
         }
         public async void AddMeasurement(Measurement measurement)
         {
@@ -42,7 +36,14 @@ namespace AirDucksProject.Managers
                 List<Measurement> latestMeasurements = new List<Measurement>();
                 foreach(int id in await context.Set<Sensor>().Select(i => i.Id).ToListAsync())
                 {
-                    latestMeasurements.Add(await context.Set<Measurement>().Where(m => m.SensorId == id).Select(m => m).OrderBy(m => m.TimeStamp).LastAsync());
+                    try
+                    {
+                        latestMeasurements.Add(context.Set<Measurement>().Where(m => m.SensorId == id).Select(m => m).OrderBy(m => m.TimeStamp).LastAsync().Result);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
                 return latestMeasurements;
             }

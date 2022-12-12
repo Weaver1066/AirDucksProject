@@ -1,6 +1,7 @@
 ﻿using AirDucksProject.Managers;
 using AirDucksProject.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
@@ -65,15 +66,39 @@ namespace AirDucksProject.Controllers
         }
 
         // PUT api/<Controller>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public ActionResult<Sensor> Put([FromBody] Sensor sensor)
         {
+            try
+            {
+                return Ok(sensorManager.UpdateSensorAsync(sensor).Result);
+            }
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException) return BadRequest(ex.Message);
+                if(ex is SqlException) return Conflict("This macAddress already exists");
+                return NotFound("Something went wrong");
+            }
         }
 
         // DELETE api/<Controller>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<Sensor> Delete([FromBody] Sensor sensor)
         {
+            try
+            {
+                return Ok(sensorManager.DeleteSensorAsync(sensor).Result);
+            }
+            catch(Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

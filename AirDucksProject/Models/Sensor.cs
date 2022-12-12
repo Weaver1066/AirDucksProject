@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.NetworkInformation;
 
@@ -10,7 +11,6 @@ namespace AirDucksProject.Models
         public int Id { get; set; }
 
         public string Name { get; set; }
-
         public string Mac { get; set; }
 
         public Sensor()

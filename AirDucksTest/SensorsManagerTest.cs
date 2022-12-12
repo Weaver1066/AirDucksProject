@@ -60,7 +60,7 @@ namespace AirDucksTest
             Assert.IsTrue(testManager.GetAll().Contains(addedSensor));
         }
         [TestMethod]
-        public void addSensorTest_FailedValidation()
+        public void AddSensorTest_FailedValidation()
         {
             SensorsManager testManager = new SensorsManager();
             string validSensorMAC = "QD-28-E0-8D-9E-51";
@@ -70,6 +70,37 @@ namespace AirDucksTest
 
             Assert.ThrowsException<AggregateException>(() => testManager.AddSensorAsync(validSensorName, invalidSensorMAC).Result);
             Assert.ThrowsException<AggregateException>(() => testManager.AddSensorAsync(invalidSensorName, validSensorMAC).Result);
+        }
+
+        [TestMethod]
+        public void UpdateSensorTest_Success()
+        {
+            SensorsManager testManager = new SensorsManager();
+            int existingId = 4;
+            string newName = "TestUpdate";
+            string newMac = "23-FF-0E-3F-0B-4C";
+
+            Sensor updatedSensor = new Sensor(newName, existingId, newMac);
+
+            Sensor result = testManager.UpdateSensorAsync(updatedSensor).Result;
+
+            Assert.AreEqual(updatedSensor, result);
+        }
+
+        [TestMethod]
+        public void DeleteSensorTest_Success()
+        {
+            SensorsManager sensorManager = new SensorsManager();
+            MeasurementsManager measManager = new MeasurementsManager();
+
+            Sensor sensorToDelete = sensorManager.AddSensorAsync("DeleteThisSensor", "1A-BC-82-8A-4B-38").Result;
+            measManager.AddMeasurement(new Measurement(DateTime.Now.AddDays(2), 2f, sensorToDelete.Id));
+            measManager.AddMeasurement(new Measurement(DateTime.Now.AddDays(3), 2f, sensorToDelete.Id));
+            measManager.AddMeasurement(new Measurement(DateTime.Now, 2f, sensorToDelete.Id));
+
+            //Sensor deletedSensor = sensorManager.DeleteSensorAsync(sensorToDelete).Result;
+
+            //Assert.IsFalse(sensorManager.GetAll().Contains(deletedSensor));
         }
     }
 }
