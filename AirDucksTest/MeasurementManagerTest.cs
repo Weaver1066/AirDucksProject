@@ -15,9 +15,17 @@ namespace AirDucksTest
         public void AddMeasurementTest_Success()
         {
             MeasurementsManager mmTest = new MeasurementsManager();
-            Measurement m1 = new Measurement() { Reading = 2f, SensorId = 1, TimeStamp = DateTime.Now };
+            Measurement m1 = new Measurement() { Reading = 2f, SensorId = 3, TimeStamp = DateTime.Now };
+            Measurement m2 = new Measurement() { Reading = 2f, SensorId = 3, TimeStamp = DateTime.Now };
+            Measurement m3 = new Measurement() { Reading = 2f, SensorId = 3, TimeStamp = DateTime.Now };
+            Measurement m4 = new Measurement() { Reading = 2f, SensorId = 3, TimeStamp = DateTime.Now };
+
 
             mmTest.AddMeasurement(m1);
+            mmTest.AddMeasurement(m2);
+            mmTest.AddMeasurement(m3);
+            mmTest.AddMeasurement(m4);
+
 
             Assert.AreEqual(m1, mmTest.GetLatest().First());
         }
