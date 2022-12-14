@@ -47,13 +47,16 @@ namespace AirDucksProject.Migrations
 
                     b.Property<string>("Mac")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Mac")
+                        .IsUnique();
 
                     b.ToTable("Sensors");
                 });

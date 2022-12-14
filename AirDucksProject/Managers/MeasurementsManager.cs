@@ -1,6 +1,7 @@
 ﻿using AirDucksProject.Database;
 using AirDucksProject.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace AirDucksProject.Managers
 {
@@ -46,6 +47,27 @@ namespace AirDucksProject.Managers
                     }
                 }
                 return latestMeasurements;
+            }
+        }
+        public async Task<IEnumerable<Measurement>> GetAllReadingsBySensorId(int id)
+        {
+            using (var context = new AirDucksDbContext())
+            {
+                List<Measurement> allReadingsBySensor = new List<Measurement>();
+                try
+                {
+                    var query = context.Set<Measurement>().Where(m => m.SensorId == id).Select(m => m).ToList();
+                    foreach (var i in query)
+                    {
+                        allReadingsBySensor.Add(i);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                return allReadingsBySensor;
             }
         }
     }
