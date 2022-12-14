@@ -42,5 +42,21 @@ namespace AirDucksTest
 
             Assert.AreEqual(m2, mmTest.GetLatest().First());
         }
+        [TestMethod]
+        public void GetAllReadingsBySensorId_IdFoundSuccess()
+        {
+            MeasurementsManager testManager = new MeasurementsManager();
+            Measurement m1 = new Measurement() { Reading = 2f, SensorId = 6, TimeStamp = DateTime.Now };
+            Measurement m2 = new Measurement() { Reading = 200f, SensorId = 6, TimeStamp = DateTime.Now };
+
+            testManager.AddMeasurement(m1);
+            testManager.AddMeasurement(m2);
+            Assert.AreEqual(2, testManager.GetAllReadingsBySensorId(6).Result.Count());
+        }
+        public void GetAllReadingsBySensorId_IdFoundFail()
+        {
+            MeasurementsManager testManager = new MeasurementsManager();
+            Assert.AreEqual(0, testManager.GetAllReadingsBySensorId(42).Result.Count());
+        }
     }
 }

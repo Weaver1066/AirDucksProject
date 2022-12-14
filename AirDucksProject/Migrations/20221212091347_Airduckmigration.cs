@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AirDucksProject.Migrations
 {
     /// <inheritdoc />
-    public partial class airducks : Migration
+    public partial class Airduckmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace AirDucksProject.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Mac = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Mac = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,6 +47,12 @@ namespace AirDucksProject.Migrations
                 name: "IX_Measurements_SensorId",
                 table: "Measurements",
                 column: "SensorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sensors_Mac",
+                table: "Sensors",
+                column: "Mac",
+                unique: true);
         }
 
         /// <inheritdoc />
