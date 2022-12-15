@@ -113,7 +113,7 @@ Vue.createApp({
                 this.updatePageOn = false;
                 this.createPageOn = false;
                 this.deletePageOn = false;
-                this.ChartPageOn = false
+                this.chartPageOn = false;
             }
         },
         showChartPage(id) {

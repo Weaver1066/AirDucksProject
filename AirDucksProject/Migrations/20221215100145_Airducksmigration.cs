@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AirDucksProject.Migrations
 {
     /// <inheritdoc />
-    public partial class Airduckmigration : Migration
+    public partial class Airducksmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

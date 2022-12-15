@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AirDucksProject.Migrations
 {
     [DbContext(typeof(AirDucksDbContext))]
-    [Migration("20221212091347_Airduckmigration")]
-    partial class Airduckmigration
+    [Migration("20221215100145_Airducksmigration")]
+    partial class Airducksmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
