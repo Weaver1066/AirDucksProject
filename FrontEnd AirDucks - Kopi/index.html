@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://unpkg.com/vue@next"></script>
+    <title>AirDucks</title>
+</head>
+<body id="app" class="container">
+    <header class="row">
+        <div class="col-10">
+            <a @click="getAll(), ShowAllPage()" href="#"><img src="images/duck-geca187efa_1280.png" style="height:100px;"></a>
+            <a style="color: #000;" @click="getAll(), ShowAllPage()" href="#">Oversigt</a>
+        </div>
+        <div class="col-2">
+            <button style="margin-top:30px;" @click="createSensorPage" class="btn btn-primary">Opret Sensor</button>
+        </div>
+        <!-- Button trigger modal -->
+    </header>
+    <div id="showAll" :style="{
+        display: showAllPageOn  ? '': 'none',
+      }" class="row" >
+        <div class="col-12">
+            <table id="table" class="table table-striped table-bordered table-hover">
+                <thead>
+                <th>Sensor:</th>
+                <th>Luft kvalitet:</th>
+                <th>Funktioner:</th>
+            </thead>
+            <tbody>
+                <tr v-bind:id="'data_' + row.Id" v-for="row in sensorData">
+                        <td v-bind:id="'td_' + row.Id">
+                            <a @click="showChartPage(row.Id)">{{row.Name}}</a>
+                        </td>
+                        <td>
+                            {{row.latestMeasurement}}
+                        </td>
+
+                    <td>
+                        <button style="margin-right:10px;" v-bind:id="'update_' + row.Id" class="btn btn-secondary"  @click="updateSensorPage(row.Id, row.Name, row.Mac)">Rediger</button>
+                        <button v-bind:id="'delete_' + row.Id" class="btn btn-danger" @click="deleteSensorPage(row.Id, row.Name, row.Mac)">Slet</button>
+                    </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="AddSensorPage" :style="{
+        display: createPageOn ? '': 'none',
+      }"  class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <h1 style="text-align:center;">Opret Sensor</h1>
+        <form>
+            <div class="form-group">
+              <label for="input_name">Navn</label>
+              <input type="text" v-model="newSensor.name" class="form-control" id="input_name" placeholder="stue">
+            </div>
+            <div class="form-group">
+              <label for="input_mac">MAC-Adresse</label>
+              <input type="string"  v-model="newSensor.mac" class="form-control" id="input_mac" placeholder="7D-49-4D-F8-33-74">
+            </div>
+            <button type="button" @click="addSensor()" class="btn btn-primary float-right">Opret Sensor</button>
+          </form>
+        </div>
+    </div>
+    <div id="UpdateSensorPage" :style="{
+        display: updatePageOn ? '': 'none',
+      }"  class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <h1 style="text-align:center;">Rediger Sensor</h1>
+        <form>
+            <div class="form-group">
+              <label for="input_name">Navn</label>
+              <input type="text" v-model="newSensor.name" class="form-control" id="input_name">
+            </div>
+            <div class="form-group">
+              <label for="input_mac">MAC-Adresse</label>
+              <input type="string"  v-model="newSensor.mac"class="form-control" id="input_mac">
+            </div>
+            <button type="button" @click="updateSensor()" class="btn btn-primary float-right">rediger Sensor</button>
+          </form>
+        </div>
+    </div>
+    <div id="DeleteSensorPage"  :style="{
+        display: deletePageOn ? '': 'none',
+      }" class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <h1 style="text-align:center;">Slet Sensor</h1>
+            <div class="alert alert-danger">
+                <h5>Er du sikker på du vil slette sensoren?</h5>
+                <form method="post">
+                    <button type="button" class="btn btn-danger" @click="deleteSensor()">Slet</button>
+                    <a class="btn btn-primary" @click="getAll(), ShowAllPage()">Fortryd</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="ChartPage"  :style="{
+        display: chartPageOn ? '': 'none',
+      }" class="row">
+        <div class="col-3">
+        </div>
+        <div class="form-check">
+            <input type="radio" onclick="setValues(1)" class="form-check-input" id="radio1" name="optradio" value="option1">I dag
+            <label class="form-check-label" for="radio1"></label>
+          </div>
+        <div class="form-check">
+            <input type="radio" onclick="setValues(2)" class="form-check-input" id="radio2" name="optradio" value="option2">En uge
+            <label class="form-check-label" for="radio1"></label>
+          </div>
+          <div class="form-check">
+            <input type="radio" onclick="setValues(3)" class="form-check-input" id="radio3" name="optradio" value="option3">En Måned
+            <label class="form-check-label" for="radio2"></label>
+          </div>
+          <div class="form-check">
+            <input type="radio" onclick="setValues(4)" class="form-check-input" id="radio4" name="optradio" value="option4">Et år
+            <label class="form-check-label"></label>
+          </div>
+        <div id="data" hidden="true" >{{measData}}</div>
+        <canvas id="myChart" style="width:100%;max-width:60rem"></canvas>
+        <div class="col-6">
+            
+        </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0/axios.min.js"></script>
+    <script src="js/Index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="js/chartScript.js"></script>
+</body>
+</html>

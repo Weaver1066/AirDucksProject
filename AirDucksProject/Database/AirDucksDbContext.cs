@@ -8,7 +8,7 @@ namespace AirDucksProject.Database
         //DB configuration - connects to a database through a connection string
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=AirDucksDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
+            optionsBuilder.UseSqlServer(@"Server=tcp:weavershcool.database.windows.net,1433;Initial Catalog=AirducksDB;Persist Security Info=False;User ID=weaver1066;Password=Hastings!3879;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
         //DbSets
         public DbSet<Sensor> Sensors { get; set; }
